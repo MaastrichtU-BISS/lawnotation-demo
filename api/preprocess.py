@@ -222,13 +222,11 @@ class SplitHTMLArticle(SplitRule):
         def trim_new_lines(s):
             def merge_lines(match_obj):
                 if match_obj.group() is not None:
-                    if len(match_obj.group()) < 8:
-                        return re.sub(r'\n+', '\t', match_obj.group())
-                    else:
-                        return match_obj.group()
+                    return re.sub(r'(\n+)$', '\t', match_obj.group())
 
             trimmed = re.sub(r'\n+', '\n\n', s)
-            trimmed = re.sub(r'(\(?\w+\)|\—)\n+', merge_lines, trimmed)
+            trimmed = re.sub(r'\n+(\(?\w+\)|\—|\w+\.)\n+',
+                             merge_lines, trimmed)
             c = 0
             for i in range(len(trimmed)):
                 if trimmed[i] == '\n':

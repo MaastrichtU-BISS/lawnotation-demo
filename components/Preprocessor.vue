@@ -15,8 +15,9 @@
               <h4 class="text-uppercase">{{ fragment }}:</h4>
               <ol>
                 <li v-for="(subfragment, index) in parsed_doc[fragment]" :key="'fragment_' + fragment + '_' + index">
-                  <a class="ml-3" :href="'#preview'" @click="preview_text = subfragment">preview</a>
-                  <a class="mx-3" :href="'#'">annotate</a>
+                  <button class="ml-3 btn btn-link"  @click="preview_text = subfragment">preview</button>
+                  <button class="btn btn-link sm mx-3" @click="goToAnnotate(subfragment)">annotate</button>
+                  <NuxtLink id="annotator_link" class="d-none" to="/annotator">annotate</NuxtLink>
                 </li>
               </ol>
             </div>
@@ -35,19 +36,31 @@
   
 <script>
   export default {
+    computed: {
+        parsed_doc() {
+            return this.$store.state.parsed_doc;
+        },
+        doc_link() {
+          return this.$store.state.doc_link;
+        }
+    },
     data() {
       return {
-       parsed_doc: {},
        loading: false,
        preview_text: ""
       }
     },
     methods: {
+      goToAnnotate(subfragment) {
+        this.$store.commit('set_text_to_annotate', subfragment);
+        document.getElementById('annotator_link').click()
+      },
       async post_text() {
         this.loading = true;
-        this.parsed_doc = {};
+        // this.parsed_doc = {};
         this.preview_text = "";
         const text_url = document.getElementById("url_input").value;
+        this.$store.commit('set_doc_link', text_url);
 
         const options = {
             method: 'POST',
@@ -61,7 +74,7 @@
         .then(res => res.json())
         .then(res => { 
           console.log(res)
-          this.parsed_doc = res;
+          this.$store.commit('set_parsed_doc', res);
           this.loading = false;
         })
         .catch(error => {
@@ -70,7 +83,7 @@
       }
     },
     mounted() {
-      document.getElementById("url_input").value = "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32013R1308&qid=1673876842533&from=EN";
+      document.getElementById("url_input").value = this.doc_link;
     }
   };
 </script>

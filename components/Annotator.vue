@@ -1,17 +1,5 @@
 <template>
-    <main>
-      <div class="container">
-        <!-- <div class="row py-3">
-          <div class="col text-center">
-            <input type="file" accept=".txt, .json" id="input-file" @change="file_inputed"/>
-          </div>
-          <div class="col text-center">
-            <button class="btn btn-primary" @click="download_task">Download Task</button>
-          </div>
-        </div> -->
-      </div>
-      <div id="label-studio"></div>
-    </main>
+  <div id="label-studio"></div>
 </template>
   
 <script>
@@ -20,12 +8,12 @@
   
   
   export default {
+    props: ["text"],
     data() {
       return {
         labelStudio: null,
         annotations: [],
         predictions: [],
-        text: "testing"
         // task: null
       }
     },
@@ -46,7 +34,7 @@
           </View>
   
           <View>
-            <View style="height: 200px; overflow-y: auto">
+            <View style="height: auto; overflow-y: auto; padding: 0 1em">
               <Text name="text" value="$text" />
             </View>
   
@@ -67,10 +55,6 @@
                 <Header value="Your confidence" />
               </View>
               <Rating name="confidence" toName="text" perRegion="true" />
-            </View>
-  
-            <View style="width: 100%; display: block">
-              <Header value="Select span after creation to go next"/>
             </View>
           </View>
         </View>
@@ -118,7 +102,7 @@
         }, 
         onSubmitAnnotation: function(LS, annotation) {
           // retrive an annotation 
-          // console.log(annotation.serializeAnnotation())
+          console.log(annotation.serializeAnnotation())
           // console.log(annotation.serializeAnnotation())
           // axios.post('api/tasks/1/annotations', annotation.serializeAnnotation())
           // .then(response => {
@@ -130,7 +114,7 @@
         },
         onUpdateAnnotation: function(LS, annotation) {
           // retrive an annotation 
-          // console.log(annotation.serializeAnnotation())
+          console.log(annotation.serializeAnnotation())
         }
       });
   
