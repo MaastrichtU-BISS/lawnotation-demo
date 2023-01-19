@@ -15,8 +15,8 @@
               <h4 class="text-uppercase">{{ fragment }}:</h4>
               <ol>
                 <li v-for="(subfragment, index) in parsed_doc[fragment]" :key="'fragment_' + fragment + '_' + index">
-                  <button class="ml-3 btn btn-link"  @click="preview_text = subfragment">preview</button>
-                  <button class="btn btn-link sm mx-3" @click="goToAnnotate(subfragment)">annotate</button>
+                  <a href="#preview" class="ml-3 btn btn-link" style="outline: none"  @click="preview_text = subfragment">preview</a>
+                  <button class="btn btn-link sm mx-3" style="outline: none" @click="goToAnnotate(subfragment)">annotate</button>
                   <NuxtLink id="annotator_link" class="d-none" to="/annotator">annotate</NuxtLink>
                 </li>
               </ol>
@@ -57,7 +57,6 @@
       },
       async post_text() {
         this.loading = true;
-        // this.parsed_doc = {};
         this.preview_text = "";
         const text_url = document.getElementById("url_input").value;
         this.$store.commit('set_doc_link', text_url);
