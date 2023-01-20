@@ -69,7 +69,7 @@
             }
         }
 
-        fetch('http://localhost:3000/api/preprocess', options)
+        fetch('https://lawnotation-demo.vercel.app/api/preprocess', options)
         .then(res => res.json())
         .then(res => { 
           console.log(res)
