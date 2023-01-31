@@ -51,5 +51,9 @@ export default {
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
+  },
+
+  publicRuntimeConfig: {
+    baseURL: process.env.NODE_ENV === 'production' ? 'https://lawnotation-demo.vercel.app' : 'https://localhost:3000'
   }
 }
