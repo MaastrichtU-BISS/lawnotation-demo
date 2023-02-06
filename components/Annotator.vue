@@ -1,5 +1,8 @@
 <template>
-  <div id="label-studio"></div>
+  <div>
+    <a id="download_ann" class="d-none"></a>
+    <div id="label-studio"></div>
+  </div>
 </template>
   
 <script>
@@ -18,7 +21,14 @@
       }
     },
     methods: {
-      
+      download_annotation(annotations) {
+        var ann = { text: this.text, annotations: annotations}
+        var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(ann));
+        var dlAnchorElem = document.getElementById('download_ann');
+        dlAnchorElem.setAttribute("href", dataStr);
+        dlAnchorElem.setAttribute("download", "annotation.json");
+        dlAnchorElem.click();
+      }
     },
     mounted() {
       this.labelStudio = new LabelStudio('label-studio', {
@@ -100,9 +110,11 @@
           });
           LS.annotationStore.selectAnnotation(c.id);
         }, 
-        onSubmitAnnotation: function(LS, annotation) {
+        onSubmitAnnotation: (LS, annotation) => {
           // retrive an annotation 
-          console.log(annotation.serializeAnnotation())
+          this.download_annotation(annotation.serializeAnnotation());
+
+
           // console.log(annotation.serializeAnnotation())
           // axios.post('api/tasks/1/annotations', annotation.serializeAnnotation())
           // .then(response => {
@@ -112,9 +124,9 @@
           //   console.log(error);
           // });
         },
-        onUpdateAnnotation: function(LS, annotation) {
+        onUpdateAnnotation: (LS, annotation) => {
           // retrive an annotation 
-          console.log(annotation.serializeAnnotation())
+          this.download_annotation(annotation.serializeAnnotation());
         }
       });
   
