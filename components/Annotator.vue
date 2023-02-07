@@ -11,7 +11,7 @@
   
   
   export default {
-    props: ["text"],
+    props: ["text", "initial_annotations"],
     data() {
       return {
         labelStudio: null,
@@ -31,6 +31,7 @@
       }
     },
     mounted() {
+      console.log(this.initial_annotations)
       this.labelStudio = new LabelStudio('label-studio', {
         config: `
         <View style="display: flex;">
@@ -97,32 +98,29 @@
           lastName: "Dean"
         },
         task: {
-          annotations: this.annotations,
-          predictions: this.predictions,
-          id: 1,
+          annotations: this.initial_annotations,
+          // predictions: this.predictions,
+          // id: 1,
           data: {
             text: this.text
           },
         },
-        onLabelStudioLoad: function(LS) {
-          var c = LS.annotationStore.addAnnotation({
-            userGenerate: true
-          });
-          LS.annotationStore.selectAnnotation(c.id);
+        onLabelStudioLoad: (LS) => {
+          console.log(LS.annotationStore.annotations)
+          // if(this.initial_annotations.length > 0) {
+          //   // LS.annotationStore.selectAnnotation(LS.annotationStore.annotations);
+          // }
+          // else {
+            var c = LS.annotationStore.addAnnotation({
+              userGenerate: true
+            });
+            LS.annotationStore.selectAnnotation(c.id);
+          // }
         }, 
         onSubmitAnnotation: (LS, annotation) => {
           // retrive an annotation 
+          this.download_annotation([annotation]);
           this.download_annotation(annotation.serializeAnnotation());
-
-
-          // console.log(annotation.serializeAnnotation())
-          // axios.post('api/tasks/1/annotations', annotation.serializeAnnotation())
-          // .then(response => {
-          //   console.log(response);
-          // })
-          // .catch(error => {
-          //   console.log(error);
-          // });
         },
         onUpdateAnnotation: (LS, annotation) => {
           // retrive an annotation 

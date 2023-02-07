@@ -10,14 +10,13 @@
       <div class="row">
         <div class="col-4">
           <div v-show="!loading">
-            <h2>Parsed Document</h2>
+            <h3>Parsed Document</h3>
             <div v-for="fragment in parsed_doc['order']" :key="'fragment_'+ fragment">
               <h4 class="text-uppercase">{{ fragment }}:</h4>
               <ol>
                 <li v-for="(subfragment, index) in parsed_doc[fragment]" :key="'fragment_' + fragment + '_' + index">
                   <a href="#preview" class="ml-3 btn btn-link" style="outline: none"  @click="preview_text = subfragment">preview</a>
                   <button class="btn btn-link sm mx-3" style="outline: none" @click="goToAnnotate(subfragment)">annotate</button>
-                  <NuxtLink id="annotator_link" class="d-none" to="/annotator">annotate</NuxtLink>
                 </li>
               </ol>
             </div>
@@ -25,7 +24,7 @@
         </div>
         <div class="col-8">
           <div v-show="!loading">
-            <h2 id="preview">Preview</h2>
+            <h3 id="preview">Preview</h3>
             <div style="white-space: pre-wrap;">{{ preview_text }}</div>
           </div>
         </div>
@@ -53,6 +52,7 @@
     methods: {
       goToAnnotate(subfragment) {
         this.$store.commit('set_text_to_annotate', subfragment);
+        this.$store.commit('set_annotations', []);
         document.getElementById('annotator_link').click()
       },
       async post_text() {
