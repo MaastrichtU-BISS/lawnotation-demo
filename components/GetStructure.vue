@@ -7,9 +7,19 @@
             <b-button @click="post_text" size="sm" variant="dark">Parse</b-button>
           </b-input-group-append>
         </b-input-group>
-        <div v-show="!loading" class="row">
-            <div class="col">
-                <div style="min-height: 70vh;" id="json-viewer"></div>
+        <div v-show="!loading">
+            <div class="row py-2" v-show="json">
+                <div class="col text-center">
+                    <b-button @click="expand_collapse" class="mr-3" size="sm" variant="dark">{{ expand_collapse_label }}</b-button>
+                    <b-button @click="export_json" size="sm" variant="dark">Export JSON</b-button>
+                </div>
+            </div>
+            <div class="row py-2">
+                <div class="col">
+                    <div id="json-viewer-container">
+                        <div style="min-height: 65vh;" id="json-viewer"></div>
+                    </div>
+                </div>
             </div>
         </div>
       </b-overlay>
@@ -20,20 +30,40 @@
 import JsonViewer from '../node_modules/json-viewer-js/src/jsonViewer';
 export default {
     computed: {
-        parsed_doc() {
-            return this.$store.state.parsed_doc;
-        },
         doc_link() {
             return this.$store.state.doc_link;
+        },
+        expand_collapse_label() {
+            return this.collapsed ? "Expand All" : "Collapse All";
         }
       },
       data() {
         return {
          loading: false,
-         json: {}
+         json: null,
+         json_viewer: null,
+         collapsed: true
         }
       },
       methods: {
+        export_json() {
+
+        },
+        expand_collapse() {
+            const container = document.getElementById("json-viewer-container");
+            container.removeChild(container.firstChild);
+            var new_el = document.createElement('div');
+            new_el.id = "json-viewer";
+            new_el.style.minHeight = "65vh";
+            container.appendChild(new_el);
+            new JsonViewer({
+                container: document.getElementById("json-viewer"), 
+                data: JSON.stringify(this.json), 
+                theme: 'dark', 
+                expand: this.collapsed
+            });
+            this.collapsed = !this.collapsed;
+        },
         async post_text() {
           this.loading = true;
           this.json = {};
@@ -51,8 +81,7 @@ export default {
           fetch('/api/get_structure', options)
           .then(res => res.json())
           .then(res => { 
-            console.log(res)
-            this.json = res
+            this.json = res;
             new JsonViewer({
                 container: document.getElementById("json-viewer"), 
                 data: JSON.stringify(this.json), 
