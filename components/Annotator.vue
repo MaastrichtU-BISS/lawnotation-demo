@@ -4,12 +4,12 @@
     <div id="label-studio"></div>
   </div>
 </template>
-  
+
 <script>
   import LabelStudio from "@heartexlabs/label-studio";
   import "@heartexlabs/label-studio/build/static/css/main.css"
-  
-  
+
+
   export default {
     props: ["text", "initial_annotations"],
     data() {
@@ -32,36 +32,36 @@
     },
     mounted() {
       console.log(this.initial_annotations)
+      let label_tags = this.$store.state.labels.map(l => `<Label value="${l.name}" background="${l.color}" />`).join("\n");
+
       this.labelStudio = new LabelStudio('label-studio', {
         config: `
         <View style="display: flex;">
           <View style="width: 150px; background: #f1f1f1; border-radius: 3px">
             <Filter name="fl" toName="ner" hotkey="shift+f" minlength="1" />
             <Labels style="padding-left: 2em; margin-right: 2em;" name="ner" toName="text">
-              <Label value="Person" />
-              <Label value="Organization" />
-              <Label value="Service" />
+              ${label_tags}
             </Labels>
           </View>
-  
+
           <View>
             <View style="height: auto; overflow-y: auto; padding: 0 1em">
               <Text name="text" value="$text" />
             </View>
-  
+
           <Relations>
             <Relation value="Is A" />
             <Relation value="Has Function" />
             <Relation value="Involved In" />
             <Relation value="Related To" />
           </Relations>
-  
+
             <View>
               <Choices name="relevance" toName="text" perRegion="true">
                 <Choice value="Relevant" />
                 <Choice value="Non Relevant" />
               </Choices>
-  
+
               <View visibleWhen="region-selected">
                 <Header value="Your confidence" />
               </View>
@@ -116,18 +116,18 @@
             });
             LS.annotationStore.selectAnnotation(c.id);
           // }
-        }, 
+        },
         onSubmitAnnotation: (LS, annotation) => {
-          // retrive an annotation 
+          // retrive an annotation
           this.download_annotation([annotation]);
           this.download_annotation(annotation.serializeAnnotation());
         },
         onUpdateAnnotation: (LS, annotation) => {
-          // retrive an annotation 
+          // retrive an annotation
           this.download_annotation(annotation.serializeAnnotation());
         }
       });
-  
+
     }
   };
   </script>

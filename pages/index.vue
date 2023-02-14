@@ -19,7 +19,7 @@
 export default {
   data() {
     return {
-      
+
     }
   },
   methods: {
@@ -31,7 +31,7 @@ export default {
         this.$store.commit('set_annotations', fileContent.annotations);
         document.getElementById('annotator_link').click()
       };
-      reader.readAsText(event.target.files[0]); 
+      reader.readAsText(event.target.files[0]);
     },
   },
   mounted() {

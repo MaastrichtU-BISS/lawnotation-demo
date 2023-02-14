@@ -2,11 +2,13 @@
   <main>
     <div class="container">
       <div class="row">
-        <div class="col" style="display: flex; gap: 0.5rem">
+        <div class="col" style="display: flex;  gap: 0.5rem">
           <input v-model="new_label.color" type="color" style="height: 100%" />
           <input v-model="new_label.name" type="text" style="flex-grow: 1" @keydown.enter="add_label()" />
           <button @click="add_label()" class="btn btn-primary">Add</button>
           <button @click="export_labels()" class="btn btn-secondary">Export</button>
+          <button @click="click_import_labels()" class="btn btn-secondary">Import</button>
+          <input type="file" style="display: none;" @change="import_labels_file_changed" id="import_file_holder" />
         </div>
         <div style="border-bottom: 1px solid #999; width: 100%; margin: 1rem"></div>
         <div class="col">
@@ -25,16 +27,24 @@
 </template>
 
 <script>
+function get_label_default() {
+  const r = Math.floor(Math.random() * 180 + 50)
+  const b = Math.floor(Math.random() * 180 + 50)
+  const g = Math.floor(Math.random() * 180 + 50)
+
+  return {
+    name: "",
+    color: `#${r.toString(16)}${g.toString(16)}${b.toString(16)}`,
+    meta: {
+      editing: false
+    }
+  };
+}
+
 export default {
   data() {
     return {
-      new_label: {
-        name: "",
-        color: "#0000cc",
-        meta: {
-          editing: false
-        }
-      },
+      new_label: get_label_default(),
 
       labels: [
         {
@@ -55,6 +65,36 @@ export default {
     }
   },
   methods: {
+    click_import_labels() {
+      const el = document.getElementById("import_file_holder")
+      if (el)
+        el.click();
+    },
+
+    import_labels_file_changed(event) {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        if ((ev.target?.result ?? false) && typeof ev.target?.result === 'string') {
+          try {
+            const import_raw = ev.target?.result;
+            const import_labels = JSON.parse(import_raw)['labels']
+            this.import_labels(import_labels)
+          } catch {
+            // TODO: toast/show error
+            alert("No labels found in file")
+          }
+        }
+      };
+      const event_target = event.target;
+      if (event_target.files != null) {
+          reader.readAsText(event_target.files[0]);
+      }
+    },
+    import_labels(labels) {
+      this.labels = labels;
+    },
+
+
     validate_new_label() {
       if (!/^\#[a-zA-Z0-9]{6}$/.test(this.new_label.color))
         throw new Error("Invalid label color");
@@ -70,7 +110,12 @@ export default {
         this.labels.push({
           name: this.new_label.name,
           color: this.new_label.color
-        })
+        });
+
+        // this.new_label = label_default;
+        // this.$set(this.new_label, label_default)
+        // alert(label_default.name)
+        this.new_label = get_label_default();
       } catch(error) {
         alert(error.message)
       }
@@ -90,7 +135,7 @@ export default {
       anchor_el.setAttribute("href", anchor_href);
       anchor_el.setAttribute("download", "labels.json");
       anchor_el.click();
-    }
+    },
   }
 }
 </script>
