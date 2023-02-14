@@ -12,6 +12,7 @@
                 <div class="col text-center">
                     <b-button @click="expand_collapse" class="mr-3" size="sm" variant="dark">{{ expand_collapse_label }}</b-button>
                     <b-button @click="export_json" size="sm" variant="dark">Export JSON</b-button>
+                    <a id="download_json" class="d-none"></a>
                 </div>
             </div>
             <div class="row py-2">
@@ -47,7 +48,11 @@ export default {
       },
       methods: {
         export_json() {
-
+            var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.json));
+            var dlAnchorElem = document.getElementById('download_json');
+            dlAnchorElem.setAttribute("href", dataStr);
+            dlAnchorElem.setAttribute("download", "structure.json");
+            dlAnchorElem.click();
         },
         expand_collapse() {
             const container = document.getElementById("json-viewer-container");
