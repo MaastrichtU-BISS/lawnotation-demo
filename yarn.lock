@@ -1088,6 +1088,14 @@
     "@babel/helper-create-regexp-features-plugin" "^7.18.6"
     "@babel/helper-plugin-utils" "^7.18.6"
 
+"@babel/polyfill@^7.8.3":
+  version "7.12.1"
+  resolved "https://registry.yarnpkg.com/@babel/polyfill/-/polyfill-7.12.1.tgz#1f2d6371d1261bbd961f3c5d5909150e12d0bd96"
+  integrity sha512-X0pi0V6gxLi6lFZpGmeNa4zxtwEmCs42isWLNjZZDE0Y8yVfgu0T2OAHlzBbdYlqbW/YXVvoBHpATEM+goCj8g==
+  dependencies:
+    core-js "^2.6.5"
+    regenerator-runtime "^0.13.4"
+
 "@babel/preset-env@7.9.0":
   version "7.9.0"
   resolved "https://registry.yarnpkg.com/@babel/preset-env/-/preset-env-7.9.0.tgz#a5fc42480e950ae8f5d9f8f2bbc03f52722df3a8"
@@ -5864,6 +5872,13 @@ json-schema-traverse@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/json-schema-traverse/-/json-schema-traverse-1.0.0.tgz#ae7bcb3656ab77a73ba5c49bf654f38e6b6860e2"
   integrity sha512-NM8/P9n3XjXhIZn1lLhkFaACTOURQXjWhV4BA/RnOv8xvgqtqpAX9IO4mRQxSx1Rlo4tqzeqb0sOlruaOy3dug==
+
+json-viewer-js@^1.0.8:
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/json-viewer-js/-/json-viewer-js-1.0.8.tgz#a4a8b61483f6362c9ec025f0bd6ab35e8efd2ec5"
+  integrity sha512-qwpYji+8t56IyxLuyq7yQt20CWgIzyobKZs/Ugc1uqvUShpm4UxfjYu/Bqa8NMTjlPhJESzifEYVNY+mCgq42g==
+  dependencies:
+    "@babel/polyfill" "^7.8.3"
 
 json5@^1.0.1:
   version "1.0.1"

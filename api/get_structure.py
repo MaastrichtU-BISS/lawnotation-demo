@@ -42,6 +42,9 @@ class ReCleaner:
         if match_obj.group() is not None:
             return re.sub(r'(\n+)$', '\t', match_obj.group())
 
+    def remove_new_lines(self, s):
+        return re.sub(r'\n+', '', s)
+
     def trim_new_lines(self, s):
         trimmed = re.sub(r'\n+', '\n\n', s)
         trimmed = re.sub(r'\n+(\(?\w+\)|\—|\w+\.)\n+',
@@ -130,32 +133,32 @@ class Html2Json:
                 attrs={"class": self.get_field("ti-art")}), stack, res)
         else:
             for ti in ti_secs:
-                s = ti.get_text()
+                s = self.re_cleaner.remove_new_lines(ti.get_text())
                 if self.re_checker.check_fragment_type(s, "part"):
                     if stack[-1][0] >= 1:
                         self.go_back_untill_same_level(stack, 1, res)
                     stack.append(
-                        (1, {"parent_key": "parts", "name": s, "text": ti.find_next_sibling().get_text()}))
+                        (1, {"parent_key": "parts", "name": s, "text": self.re_cleaner.remove_new_lines(ti.find_next_sibling().get_text())}))
                 elif self.re_checker.check_fragment_type(s, "title"):
                     if stack[-1][0] >= 2:
                         self.go_back_untill_same_level(stack, 2, res)
                     stack.append(
-                        (2, {"parent_key": "titles", "name": s, "text": ti.find_next_sibling().get_text()}))
+                        (2, {"parent_key": "titles", "name": s, "text": self.re_cleaner.remove_new_lines(ti.find_next_sibling().get_text())}))
                 elif self.re_checker.check_fragment_type(s, "chapter"):
                     if stack[-1][0] >= 3:
                         self.go_back_untill_same_level(stack, 3, res)
                     stack.append(
-                        (3, {"parent_key": "chapters", "name": s, "text": ti.find_next_sibling().get_text()}))
+                        (3, {"parent_key": "chapters", "name": s, "text": self.re_cleaner.remove_new_lines(ti.find_next_sibling().get_text())}))
                 elif self.re_checker.check_fragment_type(s, "section"):
                     if stack[-1][0] >= 4:
                         self.go_back_untill_same_level(stack, 4, res)
                     stack.append(
-                        (4, {"parent_key": "sections", "name": s, "text": ti.find_next_sibling().get_text()}))
+                        (4, {"parent_key": "sections", "name": s, "text": self.re_cleaner.remove_new_lines(ti.find_next_sibling().get_text())}))
                 elif self.re_checker.check_fragment_type(s, "subsection"):
                     if stack[-1][0] >= 5:
                         self.go_back_untill_same_level(stack, 5, res)
                     stack.append(
-                        (5, {"parent_key": "subsections", "name": s, "text": ti.find_next_sibling().get_text()}))
+                        (5, {"parent_key": "subsections", "name": s, "text": self.re_cleaner.remove_new_lines(ti.find_next_sibling().get_text())}))
                 else:
                     pass
                 try:
@@ -228,7 +231,7 @@ class Html2Json:
                 if stack[-1][0] >= 6:
                     self.go_back_untill_same_level(stack, 6, res)
                 stack.append((6, {"parent_key": "articles", "name": s,
-                             "text": current.find_next_sibling().get_text()}))
+                             "text": self.re_cleaner.remove_new_lines(current.find_next_sibling().get_text())}))
                 current = current.find_next_sibling()
             else:
                 self.get_paragraphs(s, stack, res)
@@ -324,6 +327,6 @@ class handler(BaseHTTPRequestHandler):
         content_len = int(self.headers.get('content-length', 0))
         url = self.rfile.read(content_len).decode()
         builder = Html2Json()
-        json = builder.convert_from_url(url)
-        self.wfile.write(json.dumps(json).encode())
+        res = builder.convert_from_url(url)
+        self.wfile.write(json.dumps(res).encode())
         return
