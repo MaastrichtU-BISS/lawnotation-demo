@@ -3,8 +3,8 @@
     <div class="container">
       <div class="row">
         <div class="col" style="display: flex; gap: 0.5rem">
-          <input v-model="new_label_color" type="color" style="height: 100%" />
-          <input v-model="new_label_name" type="text" style="flex-grow: 1" @keydown.enter="add_label()" />
+          <input v-model="new_label.color" type="color" style="height: 100%" />
+          <input v-model="new_label.name" type="text" style="flex-grow: 1" @keydown.enter="add_label()" />
           <button @click="add_label()" class="btn btn-primary">Add</button>
           <button @click="export_labels()" class="btn btn-secondary">Export</button>
         </div>
@@ -28,13 +28,17 @@
 export default {
   data() {
     return {
-      new_label_color: "#0000cc",
-      new_label_name: "",
+      new_label: {
+        name: "",
+        color: "#0000cc",
+        meta: {
+          editing: false
+        }
+      },
 
       labels: [
         {
           name: 'Person',
-          // color: '#d55',
           color: '#9FD8CB',
           meta: {
             editing: false,
@@ -42,7 +46,6 @@ export default {
         },
         {
           name: 'Organisation',
-          // color: '#5d5',
           color: '#CACFD6',
           meta: {
             editing: false,
@@ -52,18 +55,25 @@ export default {
     }
   },
   methods: {
+    validate_new_label() {
+      if (!/^\#[a-zA-Z0-9]{6}$/.test(this.new_label.color))
+        throw new Error("Invalid label color");
+      if (!/^[a-zA-Z]+$/.test(this.new_label.name))
+        throw new Error("Invalid label name");
+      if (this.labels.some(x => x.name.toLocaleLowerCase() === this.new_label.name.toLocaleLowerCase()))
+        throw new Error("A label with this color already exists");
+    },
     add_label() {
-      if (this.new_label_color.length === 0 || this.new_label_name.length === 0)
-        return;
-      if (!/^[a-zA-Z]+$/.test(this.new_label_name))
-        return;
-      if (this.labels.some(x => x.name.toLocaleLowerCase() === this.new_label_name.toLocaleLowerCase()))
-        return;
+      try {
+        this.validate_new_label()
 
-      this.labels.push({
-        name: this.new_label_name,
-        color: this.new_label_color
-      })
+        this.labels.push({
+          name: this.new_label.name,
+          color: this.new_label.color
+        })
+      } catch(error) {
+        alert(error.message)
+      }
     },
 
     export_labels() {
