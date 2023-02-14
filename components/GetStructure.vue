@@ -54,7 +54,7 @@ export default {
             dlAnchorElem.setAttribute("download", "structure.json");
             dlAnchorElem.click();
         },
-        expand_collapse() {
+        load_json_viewer(expand) {
             const container = document.getElementById("json-viewer-container");
             container.removeChild(container.firstChild);
             var new_el = document.createElement('div');
@@ -65,8 +65,11 @@ export default {
                 container: document.getElementById("json-viewer"), 
                 data: JSON.stringify(this.json), 
                 theme: 'dark', 
-                expand: this.collapsed
+                expand: expand
             });
+        },
+        expand_collapse() {
+            this.load_json_viewer(this.collapsed);
             this.collapsed = !this.collapsed;
         },
         async post_text() {
@@ -87,16 +90,13 @@ export default {
           .then(res => res.json())
           .then(res => { 
             this.json = res;
-            new JsonViewer({
-                container: document.getElementById("json-viewer"), 
-                data: JSON.stringify(this.json), 
-                theme: 'dark', 
-                expand: false
-            });
+            this.collapsed = true;
+            this.load_json_viewer(false);
             this.loading = false;
           })
           .catch(error => {
             this.loading = false;
+            this.collapsed = true;
           })
         }
       },
