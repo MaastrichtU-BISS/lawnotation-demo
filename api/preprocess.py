@@ -1,3 +1,4 @@
+from typing import List
 from datetime import datetime
 from http.server import BaseHTTPRequestHandler
 import json
@@ -35,7 +36,7 @@ class SplitRule(Rule):
         return False
 
     @abstractmethod
-    def split_text(self, text: str) -> list[str]:
+    def split_text(self, text: str) -> List[str]:
         pass
 
 
@@ -57,7 +58,7 @@ class TemplateInfo(IJsonifyable):
 
 
 class Template(IJsonifyable):
-    def __init__(self, split_rule: SplitRule, transform_rules: list[TransformRule], info: TemplateInfo = TemplateInfo()) -> None:
+    def __init__(self, split_rule: SplitRule, transform_rules: List[TransformRule], info: TemplateInfo = TemplateInfo()) -> None:
         self.split_rule = split_rule
         self.transform_rules = transform_rules
         self.info = info
@@ -65,7 +66,7 @@ class Template(IJsonifyable):
     def to_json(self) -> dict:
         return {'info': self.info.to_json(), 'split_rule': self.split_rule.to_json(), 'transform_rules': [rule.to_json() for rule in self.transform_rules]}
 
-    def process_text(self, text: str) -> list[str]:
+    def process_text(self, text: str) -> List[str]:
         texts = self.split_rule.split_text(text)
         res = []
         for t in texts:
@@ -77,7 +78,7 @@ class Template(IJsonifyable):
 
 class SplitHTMLArticle(SplitRule):
 
-    def split_text(self, text: str) -> list[str]:
+    def split_text(self, text: str) -> List[str]:
         res = []
         soup = BeautifulSoup(text, 'html.parser')
         oj_format = False
