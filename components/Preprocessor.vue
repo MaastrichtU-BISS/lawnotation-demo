@@ -65,7 +65,7 @@
           if ((ev.target?.result ?? false) && typeof ev.target?.result === 'string') {
             try {
               const import_raw = ev.target?.result;
-              const import_labels = JSON.parse(import_raw)['labels']
+              const import_labels = JSON.parse(import_raw)['label_collection']['labels']
               this.import_labels(import_labels)
             } catch {
               // TODO: toast/show error
