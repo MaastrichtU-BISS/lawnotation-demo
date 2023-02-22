@@ -300,7 +300,7 @@ class Html2Json:
             stack.append(
                 (7, {"parent_key": "paragraphs", "name": "text_" + str(random.randrange(10000)), "text": s}))
 
-    def convert(self, text: str) -> list[str]:
+    def convert(self, text: str) -> dict:
         res = {"document": [{}, {}, {}, {}, {}]}
         soup = BeautifulSoup(text, 'html.parser')
         self.oj_format = False
@@ -315,7 +315,24 @@ class Html2Json:
         self.get_annexes(soup, [
             (0, {"parent_key": "annexes", "name": "annexes", "text": "annexes"})], res["document"][4])
 
+        self.add_full_text_to_articles(res["document"][2], False)
         return res
+
+    def add_full_text_to_articles(self, current, inside_art) -> str:
+        full_text = []
+        for key in current:
+            if isinstance(current[key], list):
+                for el in current[key]:
+                    full_text.append(el["text"])
+                    if key == "articles":
+                        full_text += self.add_full_text_to_articles(
+                            el, True)
+                        el["full_text"] = '\n\n'.join(full_text)
+                        full_text = []
+                    else:
+                        full_text += self.add_full_text_to_articles(
+                            el, inside_art)
+        return full_text
 
 
 class handler(BaseHTTPRequestHandler):
