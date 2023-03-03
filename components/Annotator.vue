@@ -21,10 +21,22 @@
       }
     },
     methods: {
-      download_annotation(annotations) {
-        var ann = { text: this.text, annotations: annotations}
-        var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(ann));
-        var dlAnchorElem = document.getElementById('download_ann');
+      get_annotations_from_ls_store() {
+        const annotations = [];
+
+        for (const annotation_ls of window.Htx.annotationStore.annotations) {
+          annotations.push(annotation_ls.serializeAnnotation())
+        }
+
+        return annotations.map(a => {return {"result": a}});
+      },
+      download_annotation() {
+        // const annotations_ser = [{result: annotations_ls.serializeAnnotation()}]
+        const annotations_ser = this.get_annotations_from_ls_store()
+
+        const ann = { text: this.text, annotations: annotations_ser}
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(ann));
+        const dlAnchorElem = document.getElementById('download_ann');
         dlAnchorElem.setAttribute("href", dataStr);
         dlAnchorElem.setAttribute("download", "annotation.json");
         dlAnchorElem.click();
@@ -106,25 +118,21 @@
           },
         },
         onLabelStudioLoad: (LS) => {
-          console.log(LS.annotationStore.annotations)
-          // if(this.initial_annotations.length > 0) {
-          //   // LS.annotationStore.selectAnnotation(LS.annotationStore.annotations);
-          // }
-          // else {
-            var c = LS.annotationStore.addAnnotation({
+          if(this.initial_annotations.length > 0) {
+            LS.annotationStore.selectAnnotation(LS.annotationStore.annotations);
+          }
+          else {
+            const c = LS.annotationStore.addAnnotation({
               userGenerate: true
             });
             LS.annotationStore.selectAnnotation(c.id);
-          // }
+          }
         },
         onSubmitAnnotation: (LS, annotation) => {
-          // retrive an annotation
-          this.download_annotation([annotation]);
-          this.download_annotation(annotation.serializeAnnotation());
+          this.download_annotation();
         },
         onUpdateAnnotation: (LS, annotation) => {
-          // retrive an annotation
-          this.download_annotation(annotation.serializeAnnotation());
+          this.download_annotation();
         }
       });
 
