@@ -9,13 +9,16 @@
   import LabelStudio from "@heartexlabs/label-studio";
   import "@heartexlabs/label-studio/build/static/css/main.css"
 
-
   export default {
     props: ["text", "initial_annotations"],
     data() {
       return {
         labelStudio: null,
         task: null,
+        headers: {
+              "Authorization": "Token 8241751f6fcf57f6e438bbbaf766aebcab647d6a",
+              "Content-Type": "application/json",
+          }
       }
     },
     methods: {
@@ -123,10 +126,30 @@
               }
             },
             onSubmitAnnotation: (LS, annotation) => {
-              this.download_annotation();
+              let ann = annotation
+              console.log(ann)
+              fetch(`http://localhost:8080/api/tasks/${task_id}/annotations/`, { method: "POST", headers: this.headers, body: JSON.stringify(ann) })
+              .then(res => res.json())
+              .then(res => { 
+                console.log(res);
+                this.download_annotation();
+              })
+              .catch(error => {
+              console.log(error);
+              })
             },
             onUpdateAnnotation: (LS, annotation) => {
-              this.download_annotation();
+              let ann = annotation
+              console.log(ann)
+              fetch(`http://localhost:8080/api/annotations/${ann.pk}`, { method: "PUT", headers: this.headers, body: JSON.stringify(ann) })
+              .then(res => res.json())
+              .then(res => { 
+                console.log(res);
+                this.download_annotation();
+              })
+              .catch(error => {
+              console.log(error);
+              })
             }
           });
       },
@@ -135,12 +158,7 @@
   
       const task_id = this.$route.query.task_id;
       if(task_id) {
-        const options = {
-          headers: {
-              "Authorization": "Token 8241751f6fcf57f6e438bbbaf766aebcab647d6a"
-          }
-        };
-        fetch(`http://localhost:8080/api/tasks/${task_id}`, options)
+        fetch(`http://localhost:8080/api/tasks/${task_id}`, { headers: this.headers })
         .then(res => res.json())
         .then(res => { 
           this.task = res
