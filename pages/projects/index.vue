@@ -18,10 +18,11 @@
   export default {
     data() {
       return {
-        projects: []
+        projects: [],
       }
     },
     methods: {
+      
     },
     mounted() {
         const options = {
