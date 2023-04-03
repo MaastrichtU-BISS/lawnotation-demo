@@ -16,7 +16,7 @@
         labelStudio: null,
         task: null,
         headers: {
-              "Authorization": "Token 8241751f6fcf57f6e438bbbaf766aebcab647d6a",
+              "Authorization": "Token ac9094e3ae134e545a4fbdd3b9edbbcebc4ee2ed",
               "Content-Type": "application/json",
           }
       }

@@ -30,7 +30,7 @@ export default {
   mounted() {
     const options = {
           headers: {
-              "Authorization": "Token 8241751f6fcf57f6e438bbbaf766aebcab647d6a"
+              "Authorization": "Token ac9094e3ae134e545a4fbdd3b9edbbcebc4ee2ed"
           }
       };
       fetch(`http://localhost:8080/api/tasks/${this.id}`, options)
