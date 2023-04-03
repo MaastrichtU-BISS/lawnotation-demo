@@ -4,8 +4,10 @@
       <div class="row">
         <div class="col">
           <h6>My Tasks: {{ tasks.length }}</h6>
-          <div v-for="t in tasks">
-            <NuxtLink :to="`/tasks/${t.id}`" class="ddd-nav-link">{{ t.id }}</NuxtLink>
+          <div v-if="tasks.length">
+            <div v-for="t in tasks">
+              <NuxtLink :to="`/tasks/${t.id}`" class="ddd-nav-link">{{ t.id }}</NuxtLink>
+            </div>
           </div>
           <div>
             <h6>Create new task:</h6>
