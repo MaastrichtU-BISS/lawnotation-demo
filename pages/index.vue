@@ -1,27 +1,24 @@
 <template>
-    <main>
-      <div class="container">
-        <div class="row">
-          <div class="col">
-            <NuxtLink to="/projects" class="ddd-nav-link">projects</NuxtLink>
-          </div>
+  <main>
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <NuxtLink to="/projects" class="ddd-nav-link">projects</NuxtLink>
         </div>
       </div>
-    </main>
-  </template>
-  
-  <script>
-  
-  export default {
-    data() {
-      return {
-      }
-    },
-    methods: {
-    },
-    mounted() {
+    </div>
+  </main>
+</template>
 
+<script>
+export default {
+  data() {
+    return {
     }
-  };
-  </script>
-  
+  },
+  methods: {
+  },
+  mounted() {
+  }
+};
+</script>
