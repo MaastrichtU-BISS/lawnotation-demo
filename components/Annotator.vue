@@ -50,8 +50,8 @@
             config: `
             <View style="display: flex;">
               <View style="width: 150px; background: #f1f1f1; border-radius: 3px">
-                <Filter name="fl" toName="ner" hotkey="shift+f" minlength="1" />
-                <Labels style="padding-left: 2em; margin-right: 2em;" name="ner" toName="text">
+                <Filter name="fl" toName="label" hotkey="shift+f" minlength="1" />
+                <Labels style="padding-left: 2em; margin-right: 2em;" name="label" toName="text">
                   ${this.label_tags}
                 </Labels>
               </View>
@@ -162,12 +162,40 @@
       const task_id = this.$route.query.task_id;
       if(task_id) {
         fetch(`${env.backend.base_url}/api/tasks/${task_id}`, { headers: this.headers })
-        .then(res => res.json())
-        .then(res => {
-          this.task = res
-          console.log(res)
-          this.label_tags = [];
-          this.initLS()
+        .then(task => task.json())
+        .then(task => {
+
+
+          fetch(`${env.backend.base_url}/api/projects/${task.project}`, { headers: this.headers })
+          .then(project => project.json())
+          .then(project => {
+
+
+            this.task = task
+
+            console.log("taskres:", task)
+            console.log("projres:", project)
+
+            // /*
+            const labels = Object.values(project.parsed_label_config.label.labels_attrs).map((l) => {
+              return {
+                name: l.value,
+                color: l.background
+              }
+            })
+            this.label_tags = labels.map(l => `<Label value="${l.name}" background="${l.color}" />`).join("\n")
+            // */
+
+            // this.label_tags = project.label_config;
+
+            this.initLS()
+          })
+          .catch(error => {
+            console.log(error);
+          })
+
+
+
         })
         .catch(error => {
          console.log(error);
@@ -180,4 +208,4 @@
 
     }
   };
-  </script>
+</script>
