@@ -9,22 +9,21 @@
       </div>
     </main>
 </template>
-  
+
 <script>
 import Annotator from '../../components/Annotator.vue';
 
 export default {
-    computed: {
-        text_to_annotate() {
-            return this.$store.state.text_to_annotate;
-        },
-        initial_annotations() {
-          return JSON.parse(JSON.stringify(this.$store.state.initial_annotations));  
-        }
+  computed: {
+    text_to_annotate() {
+      return this.$store.state.text_to_annotate;
     },
-    mounted() {
-
-    },
-    components: { Annotator }
+    initial_annotations() {
+      return JSON.parse(JSON.stringify(this.$store.state.initial_annotations));
+    }
+  },
+  mounted() {
+  },
+  components: { Annotator }
 };
-  </script>
+</script>
