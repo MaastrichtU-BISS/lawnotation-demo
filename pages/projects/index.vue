@@ -12,9 +12,10 @@
       </div>
     </main>
   </template>
-  
+
   <script>
-  
+  import env from '~/environment.json'
+
   export default {
     data() {
       return {
@@ -22,17 +23,17 @@
       }
     },
     methods: {
-      
+
     },
     mounted() {
         const options = {
             headers: {
-                "Authorization": "Token 8241751f6fcf57f6e438bbbaf766aebcab647d6a"
+                "Authorization": `Token ${env.backend.token}`
             }
         };
-        fetch('http://localhost:8080/api/projects', options)
+        fetch(`${env.backend.base_url}/api/projects`, options)
           .then(res => res.json())
-          .then(res => { 
+          .then(res => {
             console.log(res)
             this.projects = res;
           })
@@ -42,4 +43,3 @@
     }
   };
   </script>
-  

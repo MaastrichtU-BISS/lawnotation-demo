@@ -16,14 +16,16 @@
       </div>
     </main>
   </template>
-  
+
   <script>
+  import env from '~/environment.json'
+
   export default {
     data() {
       return {
         tasks: [],
         headers: {
-              "Authorization": "Token 8241751f6fcf57f6e438bbbaf766aebcab647d6a",
+              "Authorization": `Token ${env.backend.token}`,
               "Content-Type": "application/json",
           }
       }
@@ -32,9 +34,9 @@
       change_file(event) {
         var reader = new FileReader();
         reader.onload = () => {
-          fetch(`http://localhost:8080/api/projects/${this.id}/import`, { method: "POST", headers: this.headers, body: JSON.stringify({ text: reader.result }) })
+          fetch(`${env.backend.base_url}/api/projects/${this.id}/import`, { method: "POST", headers: this.headers, body: JSON.stringify({ text: reader.result }) })
               .then(res => res.json())
-              .then(res => { 
+              .then(res => {
                 this.get_tasks()
               })
               .catch(error => {
@@ -44,9 +46,9 @@
         reader.readAsText(event.target.files[0]);
       },
       get_tasks() {
-        fetch(`http://localhost:8080/api/projects/${this.id}/tasks/`, {headers: this.headers})
+        fetch(`${env.backend.base_url}/api/projects/${this.id}/tasks/`, {headers: this.headers})
           .then(res => res.json())
-          .then(res => { 
+          .then(res => {
             console.log(res)
             this.tasks = res;
           })
@@ -56,13 +58,12 @@
       }
     },
     async asyncData({ params }) {
-      const id = params.id 
+      const id = params.id
       return { id }
     },
     mounted() {
      this.get_tasks()
-        
+
     }
   };
   </script>
-  

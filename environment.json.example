@@ -1,0 +1,6 @@
+{
+  "backend": {
+    "token": "[paste labelstudio api token here]",
+    "base_url": "http://localhost:8080"
+  }
+}

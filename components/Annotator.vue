@@ -6,6 +6,8 @@
 </template>
 
 <script>
+  import env from '~/environment.json'
+
   import LabelStudio from "@heartexlabs/label-studio";
   import "@heartexlabs/label-studio/build/static/css/main.css"
 
@@ -15,8 +17,9 @@
       return {
         labelStudio: null,
         task: null,
+        label_tags: "",
         headers: {
-              "Authorization": "Token 8241751f6fcf57f6e438bbbaf766aebcab647d6a",
+              "Authorization": `Token ${env.backend.token}`,
               "Content-Type": "application/json",
           }
       }
@@ -128,9 +131,9 @@
             onSubmitAnnotation: (LS, annotation) => {
               let ann = annotation
               console.log(ann)
-              fetch(`http://localhost:8080/api/tasks/${task_id}/annotations/`, { method: "POST", headers: this.headers, body: JSON.stringify(ann) })
+              fetch(`${env.backend.base_url}/api/tasks/${task_id}/annotations/`, { method: "POST", headers: this.headers, body: JSON.stringify(ann) })
               .then(res => res.json())
-              .then(res => { 
+              .then(res => {
                 console.log(res);
                 this.download_annotation();
               })
@@ -141,9 +144,9 @@
             onUpdateAnnotation: (LS, annotation) => {
               let ann = annotation
               console.log(ann)
-              fetch(`http://localhost:8080/api/annotations/${ann.pk}`, { method: "PUT", headers: this.headers, body: JSON.stringify(ann) })
+              fetch(`${env.backend.base_url}/api/annotations/${ann.pk}`, { method: "PUT", headers: this.headers, body: JSON.stringify(ann) })
               .then(res => res.json())
-              .then(res => { 
+              .then(res => {
                 console.log(res);
                 this.download_annotation();
               })
@@ -155,12 +158,12 @@
       },
     },
     mounted() {
-  
+
       const task_id = this.$route.query.task_id;
       if(task_id) {
-        fetch(`http://localhost:8080/api/tasks/${task_id}`, { headers: this.headers })
+        fetch(`${env.backend.base_url}/api/tasks/${task_id}`, { headers: this.headers })
         .then(res => res.json())
-        .then(res => { 
+        .then(res => {
           this.task = res
           console.log(res)
           this.label_tags = [];

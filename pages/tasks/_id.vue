@@ -15,6 +15,8 @@
 </template>
 
 <script>
+import env from '~/environment.json'
+
 export default {
   data() {
     return {
@@ -24,18 +26,18 @@ export default {
   methods: {
   },
   async asyncData({ params }) {
-    const id = params.id 
+    const id = params.id
     return { id }
   },
   mounted() {
     const options = {
           headers: {
-              "Authorization": "Token 8241751f6fcf57f6e438bbbaf766aebcab647d6a"
+              "Authorization": `Token ${env.backend.token}`
           }
       };
-      fetch(`http://localhost:8080/api/tasks/${this.id}`, options)
+      fetch(`${env.backend.base_url}/api/tasks/${this.id}`, options)
         .then(res => res.json())
-        .then(res => { 
+        .then(res => {
           console.log(res)
           this.task = res;
         })
