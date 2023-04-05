@@ -25,15 +25,17 @@
 </template>
 
 <script>
+import env from '~/environment.json'
+
 export default {
   data() {
     return {
       tasks: [],
       headers: {
-        Authorization: "Token ac9094e3ae134e545a4fbdd3b9edbbcebc4ee2ed",
-        "Content-Type": "application/json",
-      },
-    };
+            "Authorization": `Token ${env.backend.token}`,
+            "Content-Type": "application/json",
+        }
+    }
   },
   methods: {
     async change_file(event) {
@@ -42,7 +44,7 @@ export default {
         event.target.files[0]
       );
       const text = await textExtractor.getText();
-      fetch(`http://localhost:8080/api/projects/${this.id}/import`, {
+      fetch(`${env.backend.base_url}/api/projects/${this.id}/import`, {
         method: "POST",
         headers: this.headers,
         body: JSON.stringify({ text }),
@@ -56,7 +58,7 @@ export default {
         });
     },
     get_tasks() {
-      fetch(`http://localhost:8080/api/projects/${this.id}/tasks/`, {
+      fetch(`${env.backend.base_url}/api/projects/${this.id}/tasks/`, {
         headers: this.headers,
       })
         .then((res) => res.json())

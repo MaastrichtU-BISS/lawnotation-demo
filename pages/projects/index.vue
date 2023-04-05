@@ -29,6 +29,8 @@
 </template>
 
 <script>
+import env from '~/environment.json'
+
 export default {
   data() {
     return {
@@ -36,7 +38,7 @@ export default {
       projectName: "",
       options: {
         headers: {
-          Authorization: "Token ac9094e3ae134e545a4fbdd3b9edbbcebc4ee2ed",
+          Authorization: `Token ${env.backend.token}`,
         },
       },
     };
@@ -48,14 +50,14 @@ export default {
       options.method = "POST";
       options.headers["Content-Type"] = "application/json";
       options.body = JSON.stringify({ title: projectName });
-      
-      await fetch("http://localhost:8080/api/projects", options);
+
+      await fetch(`${env.backend.base_url}/api/projects`, options);
       this.getProjects();
     },
 
     getProjects() {
       console.log(this.options)
-      fetch("http://localhost:8080/api/projects", this.options)
+      fetch(`${env.backend.base_url}/api/projects`, this.options)
         .then((res) => res.json())
         .then((res) => {
           console.log(res);

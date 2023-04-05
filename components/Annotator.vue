@@ -6,6 +6,8 @@
 </template>
 
 <script>
+  import env from '~/environment.json'
+
   import LabelStudio from "@heartexlabs/label-studio";
   import "@heartexlabs/label-studio/build/static/css/main.css"
 
@@ -15,8 +17,9 @@
       return {
         labelStudio: null,
         task: null,
+        label_tags: "",
         headers: {
-              "Authorization": "Token ac9094e3ae134e545a4fbdd3b9edbbcebc4ee2ed",
+              "Authorization": `Token ${env.backend.token}`,
               "Content-Type": "application/json",
           }
       }
@@ -47,8 +50,8 @@
             config: `
             <View style="display: flex;">
               <View style="width: 150px; background: #f1f1f1; border-radius: 3px">
-                <Filter name="fl" toName="ner" hotkey="shift+f" minlength="1" />
-                <Labels style="padding-left: 2em; margin-right: 2em;" name="ner" toName="text">
+                <Filter name="fl" toName="label" hotkey="shift+f" minlength="1" />
+                <Labels style="padding-left: 2em; margin-right: 2em;" name="label" toName="text">
                   ${this.label_tags}
                 </Labels>
               </View>
@@ -128,9 +131,9 @@
             onSubmitAnnotation: (LS, annotation) => {
               let ann = annotation
               console.log(ann)
-              fetch(`http://localhost:8080/api/tasks/${task_id}/annotations/`, { method: "POST", headers: this.headers, body: JSON.stringify(ann) })
+              fetch(`${env.backend.base_url}/api/tasks/${task_id}/annotations/`, { method: "POST", headers: this.headers, body: JSON.stringify(ann) })
               .then(res => res.json())
-              .then(res => { 
+              .then(res => {
                 console.log(res);
                 this.download_annotation();
               })
@@ -141,9 +144,9 @@
             onUpdateAnnotation: (LS, annotation) => {
               let ann = annotation
               console.log(ann)
-              fetch(`http://localhost:8080/api/annotations/${ann.pk}`, { method: "PUT", headers: this.headers, body: JSON.stringify(ann) })
+              fetch(`${env.backend.base_url}/api/annotations/${ann.pk}`, { method: "PUT", headers: this.headers, body: JSON.stringify(ann) })
               .then(res => res.json())
-              .then(res => { 
+              .then(res => {
                 console.log(res);
                 this.download_annotation();
               })
@@ -155,16 +158,44 @@
       },
     },
     mounted() {
-  
+
       const task_id = this.$route.query.task_id;
       if(task_id) {
-        fetch(`http://localhost:8080/api/tasks/${task_id}`, { headers: this.headers })
-        .then(res => res.json())
-        .then(res => { 
-          this.task = res
-          console.log(res)
-          this.label_tags = [];
-          this.initLS()
+        fetch(`${env.backend.base_url}/api/tasks/${task_id}`, { headers: this.headers })
+        .then(task => task.json())
+        .then(task => {
+
+
+          fetch(`${env.backend.base_url}/api/projects/${task.project}`, { headers: this.headers })
+          .then(project => project.json())
+          .then(project => {
+
+
+            this.task = task
+
+            console.log("taskres:", task)
+            console.log("projres:", project)
+
+            // /*
+            const labels = Object.values(project.parsed_label_config.label.labels_attrs).map((l) => {
+              return {
+                name: l.value,
+                color: l.background
+              }
+            })
+            this.label_tags = labels.map(l => `<Label value="${l.name}" background="${l.color}" />`).join("\n")
+            // */
+
+            // this.label_tags = project.label_config;
+
+            this.initLS()
+          })
+          .catch(error => {
+            console.log(error);
+          })
+
+
+
         })
         .catch(error => {
          console.log(error);
@@ -177,4 +208,4 @@
 
     }
   };
-  </script>
+</script>
