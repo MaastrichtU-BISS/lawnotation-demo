@@ -14,7 +14,7 @@
             <b-form-file
               id="file-small"
               size="sm"
-              accept=".txt"
+              accept=".txt,.pdf"
               @change="change_file($event)"
             ></b-form-file>
           </div>
@@ -36,23 +36,24 @@ export default {
     };
   },
   methods: {
-    change_file(event) {
-      var reader = new FileReader();
-      reader.onload = () => {
-        fetch(`http://localhost:8080/api/projects/${this.id}/import`, {
-          method: "POST",
-          headers: this.headers,
-          body: JSON.stringify({ text: reader.result }),
+    async change_file(event) {
+      console.log(event.target.files[0]);
+      const textExtractor = new TextExtractor().createTextExtractorForFile(
+        event.target.files[0]
+      );
+      const text = await textExtractor.getText();
+      fetch(`http://localhost:8080/api/projects/${this.id}/import`, {
+        method: "POST",
+        headers: this.headers,
+        body: JSON.stringify({ text }),
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          this.get_tasks();
         })
-          .then((res) => res.json())
-          .then((res) => {
-            this.get_tasks();
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      };
-      reader.readAsText(event.target.files[0]);
+        .catch((error) => {
+          console.log(error);
+        });
     },
     get_tasks() {
       fetch(`http://localhost:8080/api/projects/${this.id}/tasks/`, {
@@ -76,4 +77,45 @@ export default {
     this.get_tasks();
   },
 };
+
+class TextExtractor {
+  createTextExtractorForFile(file) {
+    const extension = file.name.split(".").at(-1);
+
+    if (extension === "pdf") {
+      return new PdfTextExtractor(file);
+    }
+
+    return new PlainTextExtractor(file);
+  }
+}
+
+class PdfTextExtractor {
+  constructor(file) {
+    this.file = file;
+  }
+
+  async getText() {
+    const formData = new FormData();
+    formData.append("pdfFile", this.file);
+    const response = await fetch("http://localhost:5000/extract-text", {
+      method: "POST",
+      body: formData,
+    });
+    return response.text();
+  }
+}
+
+class PlainTextExtractor {
+  constructor(file) {
+    this.file = file;
+  }
+
+  async getText() {
+    const reader = new FileReader();
+    reader.readAsText(this.file);
+    await new Promise((resolve) => (reader.onload = () => resolve()));
+    return reader.result;
+  }
+}
 </script>
