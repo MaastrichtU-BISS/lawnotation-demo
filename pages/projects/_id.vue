@@ -25,17 +25,17 @@
 </template>
 
 <script>
-import env from '~/environment.json'
+import env from "~/environment.json";
 
 export default {
   data() {
     return {
       tasks: [],
       headers: {
-            "Authorization": `Token ${env.backend.token}`,
-            "Content-Type": "application/json",
-        }
-    }
+        Authorization: `Token ${env.backend.token}`,
+        "Content-Type": "application/json",
+      },
+    };
   },
   methods: {
     async change_file(event) {
