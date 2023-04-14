@@ -39,10 +39,8 @@ export default {
   },
   methods: {
     async change_file(event) {
-      console.log(event.target.files[0]);
-      const textExtractor = new TextExtractor().createTextExtractorForFile(
-        event.target.files[0]
-      );
+      const inputFile = event.target.files[0];
+      const textExtractor = new TextExtractor().createTextExtractorForFile(inputFile);
       const text = await textExtractor.getText();
       fetch(`${env.backend.base_url}/api/projects/${this.id}/import`, {
         method: "POST",
