@@ -1,7 +1,9 @@
 <template>
     <div>
+    <div class="my-2 mb-3"> <a href="https://github.com/MaastrichtU-BISS/lawnotation-demo/blob/main/api/get_structure.py">source code</a></div>
       <b-overlay :show="loading" rounded="sm">
-        <b-input-group class="my-3">
+        <small class="my-3">qid and from params are optional</small>
+        <b-input-group class="">
         <b-form-input id="url_input" aria-placeholder="url"></b-form-input>
           <b-input-group-append>
             <b-button @click="post_text" size="sm" variant="dark">Parse</b-button>
@@ -95,8 +97,12 @@ export default {
         this.loading = false;
       })
       .catch(error => {
-        this.loading = false;
+        this.json = {
+          result: "invalid format"
+        };
         this.collapsed = true;
+        this.load_json_viewer(false);
+        this.loading = false;
       })
     }
   },
