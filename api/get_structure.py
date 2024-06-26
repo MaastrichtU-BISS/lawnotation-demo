@@ -341,10 +341,9 @@ class handler(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header('Content-type', 'application/json')
         self.end_headers()
-        # content_len = int(self.headers.get('content-length', 0))
-        # url = self.rfile.read(content_len).decode()
-        # builder = Html2Json()
-        # res = builder.convert_from_url(url)
-        res = { "jola": 3 }
+        content_len = int(self.headers.get('content-length', 0))
+        url = self.rfile.read(content_len).decode()
+        builder = Html2Json()
+        res = builder.convert_from_url(url)
         self.wfile.write(json.dumps(res).encode())
         return
