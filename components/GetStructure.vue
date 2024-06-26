@@ -1,6 +1,5 @@
 <template>
     <div>
-    <div class="my-2 mb-3"> <a href="https://github.com/MaastrichtU-BISS/lawnotation-demo/blob/main/api/get_structure.py">source code</a></div>
       <b-overlay :show="loading" rounded="sm">
         <small class="my-3">qid and from params are optional</small>
         <b-input-group class="">
@@ -33,9 +32,6 @@
 import JsonViewer from '../node_modules/json-viewer-js/src/jsonViewer';
 export default {
   computed: {
-    doc_link() {
-        return this.$store.state.doc_link;
-    },
     expand_collapse_label() {
         return this.collapsed ? "Expand All" : "Collapse All";
     }
@@ -78,7 +74,6 @@ export default {
       this.loading = true;
       this.json = {};
       const text_url = document.getElementById("url_input").value;
-      this.$store.commit('set_doc_link', text_url);
 
       const options = {
         method: 'POST',
@@ -97,6 +92,7 @@ export default {
         this.loading = false;
       })
       .catch(error => {
+        console.log(error)
         this.json = {
           result: "invalid format"
         };
@@ -107,7 +103,7 @@ export default {
     }
   },
   mounted() {
-    document.getElementById("url_input").value = this.doc_link;
+    document.getElementById("url_input").value = "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32013R1308&qid=1673876842533&from=EN"
   }
 };
 </script>

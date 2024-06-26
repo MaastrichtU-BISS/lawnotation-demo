@@ -3,7 +3,7 @@
     <div class="container">
       <div class="row">
         <div class="col">
-          <NuxtLink to="/projects" class="ddd-nav-link">projects</NuxtLink>
+          <GetStructure/>
         </div>
       </div>
     </div>
@@ -11,14 +11,15 @@
 </template>
 
 <script>
+import GetStructure from '../components/GetStructure.vue';
+
 export default {
-  data() {
-    return {
-    }
-  },
-  methods: {
+  computed: {
+      
   },
   mounted() {
-  }
+
+  },
+  components: { GetStructure }
 };
 </script>
